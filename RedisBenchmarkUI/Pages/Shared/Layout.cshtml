@@ -1,0 +1,34 @@
+﻿<!Doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,600,700&display=swap" rel="stylesheet">
+    <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
+    <title>@ViewBag.Title</title>
+    <link href="~/assets/layout/layout.css" rel="stylesheet" />
+
+    <style>
+      
+    </style>
+    @RenderSection("header", false)
+</head>
+<body>
+    <header>
+        <nav class="navbar bg-white fixed-top">
+            <a href="#" class="btn"><i class="fas fa-bars"></i></a>
+            <a class="navbar-brand text-body">Redis Benchmark Test UI</a>
+        </nav>
+    </header>
+
+    @RenderBody()
+
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="~/assets/layout/layout.js"></script>
+
+    @RenderSection("scripts", false)
+</body>
+</html>

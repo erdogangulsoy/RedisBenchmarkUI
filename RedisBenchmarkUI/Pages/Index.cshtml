@@ -1,0 +1,309 @@
+﻿@page
+@model RedisBenchmarkUI.Pages.IndexModel
+@{
+
+}
+
+@section header{
+
+    <link href="~/assets/layout/Terminal.css" rel="stylesheet" />
+
+    @if (Model.HasData)
+    {
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', { packages: ['corechart', 'line'] });
+    </script>
+    <style>
+        body {
+            background-color: white;
+        }
+    </style>
+    }
+}
+
+<main style="margin-bottom:15px;margin-top:15px;">
+    @if (!Model.HasData)
+    {
+    <div class="container">
+        <div class="card p-4" style="max-width:840px;margin:0px auto;">
+            @if (TempData.ContainsKey("error"))
+                {
+            <div class="card-header bg-white border-bottom-0">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["error"].ToString()
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+                }
+            <div class="card-header bg-white border-bottom-0">
+                <h4 class="card-title">Redis Benchmark Test</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="form-group row border-bottom pb-4">
+                        <div class="col-12 col-md-6">
+                            <label for="Name" class="col-form-label font-weight-bold">Name</label>
+                            <p class="font-italic">Please enter the test name. The name will, later, be used to identify this specific test.</p>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <input type="text" class="form-control" asp-for="Name" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group row border-bottom pb-4">
+                        <div class="col-12 col-md-6">
+                            <label for="TestTypes" class="col-form-label font-weight-bold">Host</label>
+                            <p class="font-italic">Redis Host IP</p>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <input type="text" class="form-control" asp-for="Host">
+                        </div>
+                    </div>
+                    <div class="form-group row border-bottom pb-4 pt-2">
+                        <div class="col-12 col-md-6">
+                            <label for="LoadSize" class="col-form-label font-weight-bold">Port</label>
+                            <p class="font-italic">Redis Port</p>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <input type="number" class="form-control" asp-for="Port">
+                        </div>
+                    </div>
+                    <div class="form-group row border-bottom pb-4 pt-2">
+                        <div class="col-12 col-md-6">
+                            <label for="TimeToLive" class="col-form-label font-weight-bold">Authentication</label>
+                            <p class="font-italic">Authentication token if server requires it</p>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <input type="text" class="form-control" asp-for="Token">
+                        </div>
+                    </div>
+
+                    <div class="form-group row border-bottom pb-4 pt-2">
+                        <div class="col-12 col-md-6">
+                            <label for="TimeToLive" class="col-form-label font-weight-bold">Commands to Test</label>
+                            <p class="font-italic">Please select all commands to be included in this test.</p>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" asp-for="Commands[0]" checked value="SET">
+                                <label class="custom-control-label" asp-for="Commands[0]">SET</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" asp-for="Commands[1]" checked value="GET">
+                                <label class="custom-control-label" asp-for="Commands[1]">GET</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row border-bottom pb-4 pt-2">
+                        <div class="col-12 col-md-6">
+                            <label for="LoadSize" class="col-form-label font-weight-bold">Parallel Connections</label>
+                            <p class="font-italic">Number of clients</p>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <input type="number" class="form-control" asp-for="ClientCount">
+                        </div>
+                    </div>
+
+                    <div class="form-group row border-bottom pb-4 pt-2">
+                        <div class="col-12 col-md-6">
+                            <label for="LoadSize" class="col-form-label font-weight-bold">Request Count</label>
+                            <p class="font-italic">How many requests to make</p>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <input type="number" class="form-control" asp-for="RequestCount">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row border-bottom pb-4 pt-2">
+                        <div class="col-12 col-md-6">
+                            <label for="LoadSize" class="col-form-label font-weight-bold">Data Size</label>
+                            <p class="font-italic">SET and GET value size in Bytes</p>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <input type="number" class="form-control" asp-for="DataSize">
+                        </div>
+                    </div>
+
+                    <div class="form-group row pt-2">
+                        <div class="col-12 col-md-6 offset-md-3">
+                            <button type="submit" class="btn btn-outline-primary btn-block">
+                                Confirm Test Parameters
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="my-3"></div>
+    </div>
+    }
+    else
+    {
+    <div class="container-fluid">
+        <nav class="border-bottom">
+            <div class="nav justify-content-center mt-2" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Console Output</a>
+                <a class="nav-item nav-link" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Chart</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                <section class="terminal-container">
+                    <div class="terminal-home mt-3" style="overflow-y:scroll"></div>
+                </section>
+            </div>
+            <div class="tab-pane fade" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div class="container py-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="set_chart"></div>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <div id="get_chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ <!-- Modal -->
+    <div class="modal fade" id="wndStartTestModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Redis Benchmark Test</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <dl>
+                        <dt>Test Name</dt>
+                        <dd>@Model.Name</dd>
+                    </dl>
+                    <dl>
+                        <dt>Redis Instance</dt>
+                        <dd>@Model.Host:@Model.Port</dd>
+                    </dl>
+                    <dl>
+                        <dt>Authentication</dt>
+                        <dd>
+                            @if (String.IsNullOrEmpty(Model.Token))
+                                {
+                            <span class='text-danger'>Not enabled</span>
+                                }
+                                else
+                                {
+                            @Model.Token
+                                }
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>Request Structure</dt>
+                        <dd>@Model.RequestCount request by @Model.ClientCount clients</dd>
+                    </dl>
+                    <dl>
+                        <dt>Load Size</dt>
+                        <dd>@Model.DataSize kilobytes</dd>
+                    </dl>
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="window.location.href='/'">Reset</button>
+                    <button type="button" class="btn btn-primary">Start Load Test</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</main>
+
+@section scripts{
+    <script src="~/lib/aspnet-signalr/signalr.js"></script>
+    <script src="~/custom/browser/stream.js"></script>
+    @if (Model.HasData)
+    {
+    <script type="text/javascript">
+
+        var chart,chart2, data, data2,options;
+
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            // create data object with default value
+            data = google.visualization.arrayToDataTable([
+                ["Year", "SET Operations"],
+                [0, 0]
+            ]);
+
+            data2 = google.visualization.arrayToDataTable([
+                ["Year", "GET Operations"],
+                [0, 0]
+            ]);
+            // create options object with titles, colors, etc.
+            options = {
+                title: "@Model.Name",
+                hAxis: {
+                    title: "Iterations"
+                },
+                vAxis: {
+                    title: "Count"
+                },
+                width: 900,
+                height: 500
+            };
+
+            // draw chart on load
+            //var chart_div = `<div></div>`;
+            //$("#nav-home .container").append($(chart_div));
+            //$("#nav-home .container").append($("#set_chart"));
+            chart = new google.visualization.LineChart(document.getElementById('set_chart'));
+            chart.draw(data, options);
+
+            chart2 = new google.visualization.LineChart(document.getElementById('get_chart'));
+            chart2.draw(data2, options);
+        }
+
+    </script>
+
+    <script>
+            cmd = "@Model.GenerateCLICommand()";
+
+            $("#wndStartTestModal").modal('show');
+
+        $("#wndStartTestModal").on("data:received", function (event, a, i, c){
+            data.addRow([i, Number(c)]);
+             chart.draw(data, options);
+            });
+
+        $("#wndStartTestModal").on("test:completed", function () {
+            console.log("test:completed");
+             });
+
+
+
+    </script>
+    }
+    <script>
+
+        $(function () {
+            $(".terminal-home").height($(window).height() - $("header").height() - $("nav").height() - 150);
+
+        });
+    </script>
+
+}
