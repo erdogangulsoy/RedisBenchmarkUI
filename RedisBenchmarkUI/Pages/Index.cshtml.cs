@@ -57,7 +57,7 @@ namespace RedisBenchmarkUI.Pages
 
             if (!String.IsNullOrEmpty(Token))
             {
-                sbCommand.AppendFormat(" -da {0}", Token);
+                sbCommand.AppendFormat(" -a {0}", Token);
             }
 
             return sbCommand.ToString();
